@@ -5,6 +5,26 @@ include '../../Database/db_connect.php';
 $activitySql = "SELECT activity, timestamp FROM activity_logs ORDER BY timestamp DESC LIMIT 10";
 $activityResult = $conn->query($activitySql);
 
+// Get all case types
+$caseTypes = [];
+$res = $conn->query("SELECT DISTINCT case_type FROM case_records WHERE case_type IS NOT NULL");
+while ($row = $res->fetch_assoc()) {
+    $caseTypes[] = $row['case_type'];
+}
+
+// Prepare data: [case_type][month] = count
+$caseTypeData = [];
+foreach ($caseTypes as $type) {
+    $caseTypeData[$type] = array_fill(1, 12, 0);
+    $sql = "SELECT MONTH(filed_date) AS month, COUNT(*) AS total 
+            FROM case_records 
+            WHERE case_type = '$type' AND filed_date IS NOT NULL 
+            GROUP BY MONTH(filed_date)";
+    $result = $conn->query($sql);
+    while ($row = $result->fetch_assoc()) {
+        $caseTypeData[$type][(int)$row['month']] = (int)$row['total'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -158,6 +178,15 @@ $activityResult = $conn->query($activitySql);
                 <script>
                     const caseData = <?php echo json_encode(array_values($caseData)); ?>;
                 </script>
+                <script>
+                    const caseTypeData = <?php echo json_encode($caseTypeData); ?>;
+                </script>
+                <script>
+                    const datasets = Object.keys(caseTypeData).map((type, index) => ({
+                        label: type,
+                        data: caseTypeData[type],
+                    }));
+                </script>
             </section>
 
 
@@ -237,3 +266,4 @@ $activityResult = $conn->query($activitySql);
 <script src="../../Script/linechart.js"></script>
 </body>
 </html>
+``` 

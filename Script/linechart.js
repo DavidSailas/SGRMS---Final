@@ -1,23 +1,21 @@
 document.addEventListener("DOMContentLoaded", function () {
     const ctx = document.getElementById('caseChart').getContext('2d');
 
+    // Generate a color for each case type
     const colors = [
-        'rgba(54, 162, 235, 0.7)',
-        'rgba(255, 99, 132, 0.7)',
-        'rgba(255, 206, 86, 0.7)',
-        'rgba(75, 192, 192, 0.7)',
-        'rgba(153, 102, 255, 0.7)',
-        'rgba(255, 159, 64, 0.7)',
-        'rgba(99, 255, 132, 0.7)'
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
     ];
 
-    const borderColors = colors.map(color => color.replace('0.7', '1'));
-
-    const datasets = Object.keys(caseTypeData).map((type, index) => ({
+    const datasets = Object.keys(caseTypeData).map((type, idx) => ({
         label: type,
-        data: caseTypeData[type],
-        borderColor: borderColors[index % borderColors.length],
-        backgroundColor: colors[index % colors.length],
+        data: Object.values(caseTypeData[type]),
+        borderColor: colors[idx % colors.length],
+        backgroundColor: colors[idx % colors.length].replace('1)', '0.2)'),
         tension: 0.4,
         fill: false,
         pointBackgroundColor: '#fff',

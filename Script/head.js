@@ -1,42 +1,30 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // SIDEBAR ACTIVE LINK TOGGLE
-    const sidebarLinks = document.querySelectorAll('#sidebar .side-menu.top li a');
-    sidebarLinks.forEach(link => {
-        const li = link.parentElement;
-        link.addEventListener('click', () => {
-            // Remove active class from all links
-            sidebarLinks.forEach(l => l.parentElement.classList.remove('active'));
-            // Add active class to clicked item
+document.addEventListener('DOMContentLoaded', function () {
+    // ACTIVE MENU ITEM
+    const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li a');
+
+    allSideMenu.forEach(item => {
+        const li = item.parentElement;
+
+        item.addEventListener('click', function () {
+            allSideMenu.forEach(i => {
+                i.parentElement.classList.remove('active');
+            });
             li.classList.add('active');
-
-            // Automatically close the sidebar when a link is clicked
-            document.getElementById('sidebar').classList.add('hide');
-
-            // Navigate to the link's href
-            const target = link.getAttribute('href');
-            if (target && target !== '#') {
-                window.location.href = target;
-            }
         });
     });
 
-    // TOGGLE SIDEBAR SHOW/HIDE
-    const sidebarToggleButton = document.querySelector('#content nav .bx.bx-menu');
+    // TOGGLE SIDEBAR
+    const menuBar = document.querySelector('nav .bx.bx-menu');
     const sidebar = document.getElementById('sidebar');
-    sidebarToggleButton.addEventListener('click', () => {
+
+    menuBar.addEventListener('click', function () {
         sidebar.classList.toggle('hide');
+
+        // Optional: close submenus when collapsed
+        if (sidebar.classList.contains('hide')) {
+            document.querySelectorAll('#sidebar .submenu').forEach(sub => sub.classList.remove('active'));
+        }
     });
-
-
-    // Handle submenu toggle
-    const profilingLink = document.getElementById('profiling-link');
-    const profilingSubmenu = document.getElementById('profiling-submenu');
-
-    profilingLink.addEventListener('click', function (e) {
-        e.preventDefault();
-        profilingSubmenu.classList.toggle('active');
-    });
-    
 
     // NAVBAR SEARCH TOGGLE (Mobile)
     const searchButton = document.querySelector('#content nav form .form-input button');
@@ -55,12 +43,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-
-
     // DARK MODE TOGGLE
     const switchMode = document.getElementById('switch-mode');
-
-
 
     // Load saved mode
     if (localStorage.getItem('mode') === 'dark') {
@@ -72,5 +56,4 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.classList.toggle('dark', this.checked);
         localStorage.setItem('mode', this.checked ? 'dark' : 'light');
     });
-
 });
